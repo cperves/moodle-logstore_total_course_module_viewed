@@ -31,7 +31,8 @@ use context_module;
 use context_system;
 use core\session\manager;
 use logstore_last_viewed_course_module\log\store;
-use mod_chat\event\course_module_viewed;
+use logstore_total_course_module_viewed\task\cleanup_task;
+use mod_forum\event\course_module_viewed;
 
 class store_test extends advanced_testcase {
     /**
@@ -43,9 +44,9 @@ class store_test extends advanced_testcase {
     private $resource;
     private $resourcecontext;
     private $cmresource;
-    private $chat;
-    private $chatcontext;
-    private $cmchat;
+    private $forum;
+    private $forumcontext;
+    private $cmforum;
 
     /**
      * @throws coding_exception
@@ -163,6 +164,32 @@ class store_test extends advanced_testcase {
         ob_end_clean();
     }
 
+    /**
+     * Test that the standard log cleanup works correctly.
+     * @param bool $jsonformat
+     * @throws coding_exception
+     * @throws dml_exception
+     * @dataProvider test_provider
+     */
+    public function test_cleanup_task(bool $jsonformat) {
+        global $DB;
+        $this->set_log_store($jsonformat);
+        $this->setup_datas();
+        $this->setUser($this->user1);
+        self::launch_module_viewed_events();
+        get_log_manager(true);
+        // Artifically modify last date.
+        $record = $DB->get_record('logstore_totalcoursemodview', array('userid' => $this->user1->id));
+        $this->assertTrue($record->timemodified > 0);
+        $record->timemodified -= 3600 * 24 * 30;
+        $DB->update_record('logstore_totalcoursemodview', $record);
+        // Remove all logs before "today".
+        set_config('loglifetime', 1, 'logstore_total_course_module_viewed');
+        $this->expectOutputString(" Deleted old log records from  total_course_module_viewed log store.\n");
+        $clean = new cleanup_task();
+        $clean->execute();
+        $this->assertEquals(0, $DB->count_records('logstore_totalcoursemodview'));
+    }
 
     // Provider.
     public static function test_provider(): array {
@@ -190,9 +217,9 @@ class store_test extends advanced_testcase {
         $this->resource = $this->getDataGenerator()->create_module('resource', array('course' => $this->course));
         $this->resourcecontext =  context_module::instance($this->resource->cmid);
         $this->cmresource = get_coursemodule_from_instance('resource', $this->resource->id);
-        $this->chat = $this->getDataGenerator()->create_module('chat', array('course' => $this->course));
-        $this->chatcontext =  context_module::instance($this->chat->cmid);
-        $this->cmchat = get_coursemodule_from_instance('chat', $this->chat->id);
+        $this->forum = $this->getDataGenerator()->create_module('forum', array('course' => $this->course));
+        $this->forumcontext =  context_module::instance($this->forum->cmid);
+        $this->cmforum = get_coursemodule_from_instance('forum', $this->forum->id);
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($this->user1->id, $this->course->id, $studentrole->id);
         get_log_manager(true);
@@ -210,8 +237,8 @@ class store_test extends advanced_testcase {
 
     private function launch_module_viewed_events() {
         resource_view($this->resource, $this->course, $this->cmresource, $this->resourcecontext);
-        $event = course_module_viewed::create(array('context' =>  context_module::instance($this->chat->cmid),
-            'objectid' => $this->chat->id));
+        $event = course_module_viewed::create(array('context' =>  context_module::instance($this->forum->cmid),
+            'objectid' => $this->forum->id));
         $event->trigger();
     }
 }

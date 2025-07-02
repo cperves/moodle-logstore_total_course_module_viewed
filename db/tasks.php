@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * logstore total course module viewed
+ * Standard log reader/writer cron task.
  *
- * @package    total_course_module_viewed
- * @author Céline Pervès <cperves@unistra.fr>
- * @author Matthieu Fuchs <matfuchs@unistra.fr>
- * @copyright Université de Strasbourg 2022 {@link http://unistra.fr}
+ * @package    logstore_last_viewed_course_module
+ * @copyright  2020 Université de Strasbourg {@link https://unistra.fr}
+ * @author  Céline Pervès <cperves@unistra.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2025062000;
-$plugin->requires  = 2022112801;
-$plugin->component = 'logstore_total_course_module_viewed';
+
+$tasks = array(
+    array(
+        'classname' => '\logstore_total_course_module_viewed\task\cleanup_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '4',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+);

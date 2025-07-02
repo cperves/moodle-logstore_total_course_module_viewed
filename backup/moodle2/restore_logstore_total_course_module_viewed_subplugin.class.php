@@ -75,6 +75,7 @@ class restore_logstore_total_course_module_viewed_subplugin extends restore_tool
                 $newdata->totalcoursemoduleviewed = $data->totalcoursemoduleviewed;
                 $newdata->totalcourseresourcesviewed = $data->totalcourseresourcesviewed;
                 $newdata->totalcourseactivitiesviewed = $data->totalcourseactivitiesviewed;
+                $newdata->timemodified = $data->timemodified;
                 $DB->insert_record('logstore_totalcoursemodview', $newdata);
             }
         }

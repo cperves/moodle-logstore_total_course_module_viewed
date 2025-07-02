@@ -38,7 +38,7 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
 use logstore_total_course_module_viewed\privacy\provider;
-use mod_chat\event\course_module_viewed;
+use mod_forum\event\course_module_viewed;
 use PHPUnit\Framework\Constraint\TraversableContainsIdentical;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -53,9 +53,9 @@ class privacy_provider_test extends provider_testcase {
     private $resource;
     private $resourcecontext;
     private $cmresource;
-    private $chat;
-    private $cmchat;
-    private $chatcontext;
+    private $forum;
+    private $cmforum;
+    private $forumcontext;
 
     protected function setUp() : void {
         parent::setUp();
@@ -318,9 +318,9 @@ class privacy_provider_test extends provider_testcase {
         $this->resource = $this->getDataGenerator()->create_module('resource', array('course' => $this->course));
         $this->resourcecontext =  context_module::instance($this->resource->cmid);
         $this->cmresource = get_coursemodule_from_instance('resource', $this->resource->id);
-        $this->chat = $this->getDataGenerator()->create_module('chat', array('course' => $this->course));
-        $this->chatcontext =  context_module::instance($this->chat->cmid);
-        $this->cmchat = get_coursemodule_from_instance('chat', $this->chat->id);
+        $this->forum = $this->getDataGenerator()->create_module('forum', array('course' => $this->course));
+        $this->forumcontext =  context_module::instance($this->forum->cmid);
+        $this->cmforum = get_coursemodule_from_instance('forum', $this->forum->id);
     }
 
     private function set_enrol_activation_state($userid, $status) {
@@ -355,8 +355,8 @@ class privacy_provider_test extends provider_testcase {
      */
     private function launch_module_viewed_events() {
         resource_view($this->resource, $this->course, $this->cmresource, $this->resourcecontext);
-        $event = course_module_viewed::create(array('context' =>  context_module::instance($this->chat->cmid),
-            'objectid' => $this->chat->id));
+        $event = course_module_viewed::create(array('context' =>  context_module::instance($this->forum->cmid),
+            'objectid' => $this->forum->id));
         $event->trigger();
     }
 

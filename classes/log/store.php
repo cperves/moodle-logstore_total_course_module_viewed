@@ -81,6 +81,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
                         } else {
                             $record->totalcourseactivitiesviewed += 1;
                         }
+                        $record->timemodified = time();
                         $DB->update_record('logstore_totalcoursemodview', $record);
 
                     } else {
@@ -90,6 +91,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
                         } else {
                             $datas->totalcourseactivitiesviewed = 1;
                         }
+                        $datas->timemodified = time();
                         $DB->insert_record('logstore_totalcoursemodview', $datas);
                     }
 

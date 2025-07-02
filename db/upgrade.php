@@ -41,5 +41,16 @@ function xmldb_logstore_total_course_module_viewed_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint(true, 2022031408, 'logstore', 'logstore_total_course_module_viewed');
     }
+    $newversion=2025062000;
+    if ($oldversion < $newversion) {
+        $dbman = $DB->get_manager();
+        $table = new xmldb_table('logstore_totalcoursemodview');
+        if (!$dbman->field_exists('logstore_totalcoursemodview', 'timemodified')) {
+            $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null,
+                XMLDB_NOTNULL, null, '0');
+            $dbman->add_field($table, $field);
+        }
+        upgrade_plugin_savepoint(true, $newversion, 'logstore', 'total_course_module_viewed');
+    }
     return true;
 }

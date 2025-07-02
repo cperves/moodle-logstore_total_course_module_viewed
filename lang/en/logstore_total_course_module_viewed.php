@@ -34,3 +34,7 @@ $string['privacy:metadata:log:totalcourseresourcesviewed'] = 'The total times re
 $string['privacy:metadata:log:totalcourseactivitiesviewed'] = 'The total times modules were viewed for a user in a course';
 $string['onlyactiveenrolments'] = 'Active enrolments only';
 $string['onlyactiveenrolments_desc'] = 'Only connections of user with active enrolments are log into this logstore';
+$string['taskcleanup'] = 'Cleanup task';
+$string['jsonformat'] = 'JSON format';
+$string['jsonformat_desc'] = 'Use standard JSON format instead of PHP serialised data in the \'other\' database field.';
+$string['loglifetime'] = 'Keep logs for';
