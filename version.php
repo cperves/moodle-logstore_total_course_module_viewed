@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2025062000;
-$plugin->requires  = 2022112801;
+$plugin->version = 2025070200; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires = 2024100705; // Requires this Moodle version.
+$plugin->release = '1.0.0';
+$plugin->maturity   = MATURITY_STABLE;
 $plugin->component = 'logstore_total_course_module_viewed';
